@@ -1,4 +1,4 @@
-# Client Dashboard System - WordPress Plugin
+#                   Client Dashboard System - WordPress Plugin
 
 ## About The Project
 
