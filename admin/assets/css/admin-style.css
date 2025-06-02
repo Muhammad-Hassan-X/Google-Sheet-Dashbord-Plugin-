@@ -1,0 +1,39 @@
+/* File: client-dashboard-system/admin/assets/css/admin-style.css */
+/* Styles for the plugin's admin pages */
+
+.wrap .nav-tab-wrapper {
+    margin-bottom: 20px;
+}
+
+/* Settings form styling */
+.wrap form .form-table th {
+    width: 250px; /* Adjust as needed for label alignment */
+}
+
+.wrap form .form-table td p.description {
+    font-size: 0.9em;
+    color: #666;
+}
+
+/* Style for the webhook URL display */
+.wrap code {
+    background-color: #f0f0f0;
+    padding: 2px 5px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+/* User management page specific styles (placeholder) */
+#user-management-area {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #fff;
+    border: 1px solid #ccd0d4;
+    border-radius: 4px;
+}
+
+#user-management-area h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
