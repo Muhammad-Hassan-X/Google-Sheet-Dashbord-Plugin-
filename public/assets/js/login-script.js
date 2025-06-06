@@ -1,3 +1,5 @@
+// File: public/assets/js/login-script.js
+
 jQuery(document).ready(function($) {
     'use strict';
 

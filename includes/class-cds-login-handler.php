@@ -36,6 +36,7 @@ class CDS_Login_Handler {
             true // Load in footer
         );
     }
+    
 
     public function authenticate_by_custom_id( $user, $username, $password ) {
         if ( isset( $_POST['user_custom_id'] ) && ! empty( trim($_POST['user_custom_id']) ) ) {

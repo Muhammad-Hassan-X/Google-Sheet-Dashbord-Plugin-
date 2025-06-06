@@ -79,6 +79,7 @@ class Client_Dashboard_System {
         add_action('login_form', array($login_handler, 'custom_login_form_fields')); 
         add_action('wp_login_failed', array($login_handler, 'custom_login_failed'));
         add_filter('login_redirect', array($login_handler, 'custom_login_redirect'), 10, 3);
+        add_action('login_enqueue_scripts', array($login_handler, 'enqueue_login_scripts')); 
     }
 
     public function register_webhook_endpoint() {
