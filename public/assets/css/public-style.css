@@ -1,5 +1,4 @@
 /* File: client-dashboard-system/public/assets/css/public-style.css */
-/* Styles for the public-facing client dashboard */
 
 .client-dashboard-system-wrap {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -16,6 +15,7 @@
     color: #333;
     border-bottom: 2px solid #f0f0f0;
     padding-bottom: 15px;
+    margin-top:0;
     margin-bottom: 25px;
     font-size: 1.8em;
 }
@@ -47,9 +47,15 @@
 .cds-user-info p, .cds-contact-support p {
     line-height: 1.6;
     color: #555;
+    margin-bottom: 0.5em;
+}
+.cds-user-info p:last-child {
+    margin-bottom: 0;
 }
 .cds-user-info p strong {
     color: #333;
+    min-width: 100px; 
+    display: inline-block;
 }
 
 
@@ -80,27 +86,31 @@
     background-color: #f9f9f9;
 }
 
+.cds-section td strong { 
+    font-weight: 600;
+}
+
 
 .status-badge {
     display: inline-block;
     padding: 5px 12px;
     border-radius: 15px;
-    color: #fff;
+    color: #fff !important; 
     font-size: 0.85em;
     font-weight: 500;
     text-transform: capitalize;
-    min-width: 120px; /* Ensure badges have some width */
+    min-width: 120px; 
     text-align: center;
+    line-height: 1.4;
 }
 
-.status-request-received { background-color: #6c757d; } /* Grey */
+.status-request-received, .status-information-received, .status-pending, .status-pending-information, .status-requested { background-color: #6c757d; } /* Grey */
 .status-in-progress { background-color: #007bff; } /* Blue */
 .status-request-sent { background-color: #17a2b8; } /* Teal */
-.status-missing-docs { background-color: #ffc107; color: #212529 !important; } /* Yellow - ensure text is dark */
+.status-missing-docs { background-color: #ffc107; color: #212529 !important; } /* Yellow */
 .status-request-denied { background-color: #dc3545; } /* Red */
 .status-request-completed { background-color: #28a745; } /* Green */
-.status-done { background-color: #20c997; } /* Another Green/Teal for finality */
-/* Add more status styles as needed */
+.status-done { background-color: #20c997; } /* Another Green/Teal */
 .status-default { background-color: #adb5bd; } /* Default fallback */
 
 .cds-contact-support a {
@@ -111,51 +121,79 @@
     text-decoration: underline;
 }
 
-/* Login message styling */
-.client-dashboard-system-wrap p a {
-    color: #007bff;
-    text-decoration: none;
+.cds-login-prompt {
+    padding: 20px;
+    background-color: #fff8e1;
+    border: 1px solid #ffecb3;
+    border-radius: 4px;
+    text-align: center;
 }
-.client-dashboard-system-wrap p a:hover {
-    text-decoration: underline;
+.cds-login-prompt a {
+    font-weight: bold;
+}
+.cds-error {
+    padding: 15px;
+    background-color: #ffebee;
+    border: 1px solid #ffcdd2;
+    color: #c62828;
+    border-radius: 4px;
 }
 
-/* Responsive table for smaller screens if needed */
 @media screen and (max-width: 768px) {
-    .cds-section table, .cds-section thead, .cds-section tbody, .cds-section th, .cds-section td, .cds-section tr {
+    .cds-section table, 
+    .cds-section thead, 
+    .cds-section tbody, 
+    .cds-section th, 
+    .cds-section td, 
+    .cds-section tr {
         display: block;
     }
     .cds-section thead tr {
         position: absolute;
         top: -9999px;
         left: -9999px;
+        border: none; 
     }
-    .cds-section tr { border: 1px solid #ccc; margin-bottom: 5px; }
+    .cds-section tr { 
+        border: 1px solid #e0e0e0; 
+        margin-bottom: 10px; 
+        border-radius: 4px;
+        background-color: #fff;
+    }
     .cds-section td {
         border: none;
-        border-bottom: 1px solid #eee;
+        border-bottom: 1px dashed #f0f0f0; 
         position: relative;
-        padding-left: 50%;
+        padding-left: 45% !important; 
+        padding-top: 10px;
+        padding-bottom: 10px;
+        min-height: 30px; 
+        text-align: right; 
         white-space: normal;
-        text-align:right;
+    }
+    .cds-section td:last-child {
+        border-bottom: none; 
     }
     .cds-section td:before {
         position: absolute;
-        top: 6px;
-        left: 6px;
-        width: 45%;
+        top: 50%;
+        transform: translateY(-50%);
+        left: 10px;
+        width: 40%; 
         padding-right: 10px;
         white-space: nowrap;
-        text-align:left;
+        text-align: left; 
         font-weight: bold;
+        color: #555;
+        font-size: 0.9em;
     }
-    /* Label data for table cells */
-    .cds-service-status td:nth-of-type(1):before { content: "Service Name"; }
-    .cds-service-status td:nth-of-type(2):before { content: "Status"; }
-    .cds-service-status td:nth-of-type(3):before { content: "Details"; }
+    
+    .cds-service-status td:nth-of-type(1):before { content: "<?php esc_attr_e( 'Service', 'client-dashboard-system' ); ?>:"; }
+    .cds-service-status td:nth-of-type(2):before { content: "<?php esc_attr_e( 'Status', 'client-dashboard-system' ); ?>:"; }
+    .cds-service-status td:nth-of-type(3):before { content: "<?php esc_attr_e( 'Details', 'client-dashboard-system' ); ?>:"; }
 
-    .cds-transaction-history td:nth-of-type(1):before { content: "Deal Name"; }
-    .cds-transaction-history td:nth-of_type(2):before { content: "Date"; }
+    .cds-transaction-history td:nth-of-type(1):before { content: "<?php esc_attr_e( 'Property', 'client-dashboard-system' ); ?>:"; }
+    .cds-transaction-history td:nth-of-type(2):before { content: "<?php esc_attr_e( 'Date', 'client-dashboard-system' ); ?>:"; }
 
-    .status-badge { width: auto; display: inline-block; } /* Adjust badge for stacked view */
+    .status-badge { width: auto; display: inline-block; } 
 }

@@ -1,39 +1,45 @@
 /* File: client-dashboard-system/admin/assets/css/admin-style.css */
-/* Styles for the plugin's admin pages */
 
-.wrap .nav-tab-wrapper {
-    margin-bottom: 20px;
-}
+.wrap.cds-admin-wrap .cds-dashboard-widgets { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+.wrap.cds-admin-wrap .cds-widget { background: #fff; border: 1px solid #ccd0d4; padding: 20px; flex: 1; min-width: 250px; box-shadow: 0 1px 1px rgba(0,0,0,.04); border-radius: 4px;}
+.wrap.cds-admin-wrap .cds-widget h2 { margin-top: 0; font-size: 1.2em; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 15px;}
+.wrap.cds-admin-wrap .cds-widget-metric { font-size: 2.5em; font-weight: bold; color: #2271b1; margin: 0 0 15px 0; line-height: 1.2;}
+.wrap.cds-admin-wrap .cds-widget ul { list-style: disc; margin-left: 20px;}
 
-/* Settings form styling */
-.wrap form .form-table th {
-    width: 250px; /* Adjust as needed for label alignment */
-}
 
-.wrap form .form-table td p.description {
-    font-size: 0.9em;
-    color: #666;
-}
-
-/* Style for the webhook URL display */
-.wrap code {
+#cds-webhook-info code {
     background-color: #f0f0f0;
     padding: 2px 5px;
     border: 1px solid #ddd;
     border-radius: 3px;
+    word-break: break-all;
 }
 
-/* User management page specific styles (placeholder) */
-#user-management-area {
-    margin-top: 20px;
-    padding: 15px;
-    background-color: #fff;
-    border: 1px solid #ccd0d4;
-    border-radius: 4px;
-}
+/* Styles for Manage Users page */
+.cds-service-list { list-style: none; margin: 0; padding: 0; }
+.cds-service-item { padding: 8px 0; border-bottom: 1px dotted #eee; }
+.cds-service-item:last-child { border-bottom: none; }
+.status-badge-admin { padding: 3px 8px; border-radius: 12px; color: #fff !important; font-size: 0.85em; margin-left: 8px; vertical-align: middle; display: inline-block; min-width: 100px; text-align:center;}
+/* Status badge colors (can reuse from public or define separately) */
+.status-request-received, .status-information-received, .status-pending, .status-pending-information { background-color: #6c757d; }
+.status-in-progress { background-color: #007bff; }
+.status-request-sent { background-color: #17a2b8; }
+.status-missing-docs { background-color: #ffc107; color: #212529 !important; }
+.status-request-denied { background-color: #dc3545; }
+.status-request-completed, .status-done { background-color: #28a745; }
 
-#user-management-area h3 {
-    margin-top: 0;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #eee;
-}
+.cds-edit-service-status-btn { margin-left: 10px; vertical-align: middle; }
+.cds-service-admin-details { font-size: 0.9em; color: #555; margin-left: 15px; margin-top: 4px; padding-left: 10px; border-left: 2px solid #eee; }
+.cds-service-admin-details.cds-missing-docs { color: #856404; background-color: #fff3cd; padding: 5px; border-radius:3px; border-left: 2px solid #ffeeba;}
+.cds-service-admin-details.cds-denied-reason { color: #721c24; background-color: #f8d7da; padding: 5px; border-radius:3px; border-left: 2px solid #f5c6cb;}
+
+/* Modal Styles */
+#cds-edit-service-modal { display:none; position:fixed; top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:100001; overflow-y: auto; }
+#cds-edit-service-modal > div { background:#f9f9f9; padding:25px; width:600px; max-width:95%; margin:50px auto; border-radius:6px; box-shadow: 0 5px 25px rgba(0,0,0,0.2); position:relative;}
+#cds-edit-service-modal h3 { margin-top: 0; padding-bottom:15px; border-bottom:1px solid #ddd; font-size:1.5em;}
+#cds-edit-service-modal label { font-weight: bold; display:block; margin-bottom:5px;}
+#cds-edit-service-modal select, #cds-edit-service-modal textarea { width:100%; padding:8px; margin-bottom:15px; border:1px solid #ddd; border-radius:4px; box-sizing: border-box;}
+#cds-edit-service-modal .button-primary { margin-right:10px;}
+#cds-modal-message { margin-top:15px; padding:10px; border-radius:4px; display:none; }
+#cds-modal-message.success { background-color: #d4edda; color: #155724; border:1px solid #c3e6cb;}
+#cds-modal-message.error { background-color: #f8d7da; color: #721c24; border:1px solid #f5c6cb;}

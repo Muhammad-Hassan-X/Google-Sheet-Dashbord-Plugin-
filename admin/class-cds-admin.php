@@ -15,18 +15,15 @@ class CDS_Admin {
         $this->version = $version;
     }
 
-    /**
-     * Add admin menu page.
-     */
     public function add_admin_menu() {
         add_menu_page(
-            __( 'Client Dashboard', 'client-dashboard-system' ), // Page Title
-            __( 'Client Dashboard', 'client-dashboard-system' ), // Menu Title
-            'manage_options',                                   // Capability
-            $this->plugin_name,                                 // Menu Slug
-            array( $this, 'display_plugin_admin_page' ),        // Callback function
-            'dashicons-groups',                                 // Icon URL
-            26                                                  // Position
+            __( 'Client Dashboard', 'client-dashboard-system' ), 
+            __( 'Client Dashboard', 'client-dashboard-system' ), 
+            'manage_options',                                   
+            $this->plugin_name,                                 
+            array( $this, 'display_plugin_admin_page' ),        
+            'dashicons-groups',                                 
+            26                                                  
         );
 
         add_submenu_page(
@@ -42,94 +39,63 @@ class CDS_Admin {
             $this->plugin_name,
             __( 'Manage Users & Services', 'client-dashboard-system' ),
             __( 'Manage Users/Services', 'client-dashboard-system' ),
-            'manage_options', // Or a more specific capability
+            'manage_options', 
             $this->plugin_name . '-manage-users',
             array( $this, 'display_manage_users_page' )
         );
     }
 
-    /**
-     * Display the main admin page (overview or dashboard for the plugin).
-     */
     public function display_plugin_admin_page() {
-        // For now, redirect to settings, or create a dedicated overview page.
-        // For simplicity, let's make this an alias for settings for now or a simple welcome.
         require_once CDS_PLUGIN_DIR . 'admin/views/admin-main-page.php';
     }
 
-    /**
-     * Display the settings page.
-     */
     public function display_settings_page() {
         require_once CDS_PLUGIN_DIR . 'admin/views/admin-settings-page.php';
     }
 
-    /**
-     * Display the manage users and services page.
-     */
     public function display_manage_users_page() {
         require_once CDS_PLUGIN_DIR . 'admin/views/admin-manage-users-page.php';
     }
 
-
-    /**
-     * Register plugin settings.
-     */
     public function register_settings() {
-        // Register a setting for Google Sheets API Key (if using direct API calls)
         register_setting(
-            'cds_settings_group', // Option group
-            'cds_google_api_key', // Option name
-            array( 'sanitize_callback' => 'sanitize_text_field' ) // Sanitization callback
+            'cds_settings_group', 
+            'cds_webhook_secret', 
+            array( 'sanitize_callback' => 'sanitize_text_field' ) 
         );
-
-        // Register a setting for Webhook Secret (to validate incoming webhooks)
+        
         register_setting(
             'cds_settings_group',
-            'cds_webhook_secret',
-            array( 'sanitize_callback' => 'sanitize_text_field' )
-        );
-
-        // Register a setting for the number of Google Sheets
-        register_setting(
-            'cds_settings_group',
-            'cds_google_sheets_count',
+            'cds_dashboard_page_id',
             array(
                 'type' => 'integer',
-                'sanitize_callback' => 'absint', // Ensures it's a positive integer
-                'default' => 5
+                'sanitize_callback' => 'absint'
             )
         );
 
-        // Dynamically register settings for each Google Sheet URL
-        $sheet_count = get_option('cds_google_sheets_count', 5);
-        for ($i = 1; $i <= $sheet_count; $i++) {
-            register_setting(
-                'cds_settings_group',
-                'cds_google_sheet_url_' . $i,
-                array(
-                    'type' => 'string',
-                    'sanitize_callback' => 'esc_url_raw' // Sanitizes URL
-                )
-            );
-        }
-
-
-        // Add settings section
-        add_settings_section(
-            'cds_general_settings_section', // ID
-            __( 'Google Sheets Integration Settings', 'client-dashboard-system' ), // Title
-            array( $this, 'settings_section_callback' ), // Callback
-            'cds_settings_page' // Page on which to show this section (slug of settings page)
+        register_setting(
+            'cds_settings_group',
+            'cds_support_email',
+            array(
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_email'
+            )
         );
 
-        // Add settings fields
-        add_settings_field(
-            'cds_google_api_key',
-            __( 'Google API Key (Optional)', 'client-dashboard-system' ),
-            array( $this, 'api_key_field_callback' ),
-            'cds_settings_page',
-            'cds_general_settings_section'
+        register_setting(
+            'cds_settings_group',
+            'cds_support_whatsapp',
+            array(
+                'type' => 'string',
+                'sanitize_callback' => 'sanitize_text_field' 
+            )
+        );
+
+        add_settings_section(
+            'cds_general_settings_section', 
+            __( 'General Settings', 'client-dashboard-system' ), 
+            array( $this, 'settings_section_callback' ), 
+            'cds_settings_page' 
         );
 
         add_settings_field(
@@ -139,39 +105,36 @@ class CDS_Admin {
             'cds_settings_page',
             'cds_general_settings_section'
         );
+
+        add_settings_field(
+            'cds_dashboard_page_id',
+            __( 'Client Dashboard Page', 'client-dashboard-system' ),
+            array( $this, 'dashboard_page_field_callback' ),
+            'cds_settings_page',
+            'cds_general_settings_section'
+        );
         
         add_settings_field(
-            'cds_google_sheets_count',
-            __( 'Number of Google Sheets', 'client-dashboard-system' ),
-            array( $this, 'google_sheets_count_field_callback' ),
+            'cds_support_email',
+            __( 'Support Email Address', 'client-dashboard-system' ),
+            array( $this, 'support_email_field_callback' ),
             'cds_settings_page',
             'cds_general_settings_section'
         );
 
-        for ($i = 1; $i <= $sheet_count; $i++) {
-            add_settings_field(
-                'cds_google_sheet_url_' . $i,
-                sprintf(__( 'Google Sheet URL %d', 'client-dashboard-system' ), $i),
-                array( $this, 'google_sheet_url_field_callback' ),
-                'cds_settings_page',
-                'cds_general_settings_section',
-                array( 'sheet_number' => $i ) // Pass sheet number to callback
-            );
-        }
+        add_settings_field(
+            'cds_support_whatsapp',
+            __( 'Support WhatsApp (Number or Link)', 'client-dashboard-system' ),
+            array( $this, 'support_whatsapp_field_callback' ),
+            'cds_settings_page',
+            'cds_general_settings_section'
+        );
     }
 
     public function settings_section_callback() {
-        echo '<p>' . __( 'Configure settings for Google Sheets integration. If using webhooks, ensure your Google Apps Script is configured to send data to:', 'client-dashboard-system' ) . ' <code>' . esc_url(get_rest_url(null, 'cds/v1/webhook')) . '</code></p>';
-        echo '<p>' . __( 'The Webhook Secret Key is used to verify that incoming requests are genuinely from your Google Apps Script. Include this key in a header (e.g., X-Webhook-Secret) in your Apps Script fetch request.', 'client-dashboard-system' ) . '</p>';
-    }
-
-    public function api_key_field_callback() {
-        $api_key = get_option( 'cds_google_api_key' );
-        printf(
-            '<input type="text" id="cds_google_api_key" name="cds_google_api_key" value="%s" class="regular-text" />',
-            isset( $api_key ) ? esc_attr( $api_key ) : ''
-        );
-        echo '<p class="description">' . __( 'Enter your Google API Key if you plan to fetch data directly (e.g., for periodic sync). Not required if solely using webhooks.', 'client-dashboard-system' ) . '</p>';
+        echo '<p>' . __( 'Configure settings for the Client Dashboard System.', 'client-dashboard-system' ) . '</p>';
+        echo '<p>' . __( 'The Webhook URL for your Google Apps Script to send data to is:', 'client-dashboard-system' ) . ' <strong><code>' . esc_url(get_rest_url(null, 'cds/v1/webhook')) . '</code></strong></p>';
+        echo '<p>' . __( 'The Webhook Secret Key is used to verify that incoming requests are genuinely from your Google Apps Script. Include this key in a header (e.g., X-Webhook-Secret) in your Apps Script fetch request if you re-enable secret key validation in the plugin.', 'client-dashboard-system' ) . '</p>';
     }
 
     public function webhook_secret_field_callback() {
@@ -180,36 +143,39 @@ class CDS_Admin {
             '<input type="text" id="cds_webhook_secret" name="cds_webhook_secret" value="%s" class="regular-text" />',
             isset( $secret ) ? esc_attr( $secret ) : ''
         );
-         echo '<p class="description">' . __( 'A secret key to verify webhook requests. Keep this confidential.', 'client-dashboard-system' ) . '</p>';
+         echo '<p class="description">' . __( 'A secret key to verify webhook requests. If empty, a default one might be used or generated. (Secret validation might be currently bypassed in the plugin for testing).', 'client-dashboard-system' ) . '</p>';
+    }
+
+    public function dashboard_page_field_callback() {
+        $selected_page_id = get_option('cds_dashboard_page_id');
+        wp_dropdown_pages(array(
+            'name'              => 'cds_dashboard_page_id',
+            'selected'          => $selected_page_id,
+            'show_option_none'  => __('— Select a Page —', 'client-dashboard-system'),
+            'option_none_value' => '0',
+        ));
+        echo '<p class="description">' . __('Select the page where you have placed the <code>[client_dashboard]</code> shortcode. Users will be redirected here after login.', 'client-dashboard-system') . '</p>';
     }
     
-    public function google_sheets_count_field_callback() {
-        $count = get_option('cds_google_sheets_count', 5);
+    public function support_email_field_callback() {
+        $email = get_option('cds_support_email');
         printf(
-            '<input type="number" id="cds_google_sheets_count" name="cds_google_sheets_count" value="%d" class="small-text" min="1" max="20" />',
-            esc_attr($count)
+            '<input type="email" id="cds_support_email" name="cds_support_email" value="%s" class="regular-text" />',
+            esc_attr($email ?? '')
         );
-        echo '<p class="description">' . __('Enter the number of Google Sheets you will be integrating (1-20). Save changes for the URL fields below to update.', 'client-dashboard-system') . '</p>';
+        echo '<p class="description">' . __('Email address for client support, displayed on the dashboard.', 'client-dashboard-system') . '</p>';
     }
 
-    public function google_sheet_url_field_callback($args) {
-        $sheet_number = $args['sheet_number'];
-        $option_name = 'cds_google_sheet_url_' . $sheet_number;
-        $url = get_option($option_name);
+    public function support_whatsapp_field_callback() {
+        $whatsapp = get_option('cds_support_whatsapp');
         printf(
-            '<input type="url" id="%s" name="%s" value="%s" class="regular-text" placeholder="https://docs.google.com/spreadsheets/d/.../edit" />',
-            esc_attr($option_name),
-            esc_attr($option_name),
-            isset($url) ? esc_url($url) : ''
+            '<input type="text" id="cds_support_whatsapp" name="cds_support_whatsapp" value="%s" class="regular-text" placeholder="+1234567890 or https://wa.me/..." />',
+            esc_attr($whatsapp ?? '')
         );
+        echo '<p class="description">' . __('WhatsApp number or direct wa.me link for client support.', 'client-dashboard-system') . '</p>';
     }
 
-
-    /**
-     * Enqueue admin-specific stylesheets.
-     */
     public function enqueue_styles( $hook_suffix ) {
-        // Only load on our plugin's admin pages
         $allowed_hooks = array(
             'toplevel_page_client-dashboard-system',
             'client-dashboard_page_client-dashboard-system-settings',
@@ -221,11 +187,7 @@ class CDS_Admin {
         wp_enqueue_style( $this->plugin_name . '-admin', CDS_PLUGIN_URL . 'admin/assets/css/admin-style.css', array(), $this->version, 'all' );
     }
 
-    /**
-     * Enqueue admin-specific JavaScript.
-     */
     public function enqueue_scripts( $hook_suffix ) {
-         // Only load on our plugin's admin pages
         $allowed_hooks = array(
             'toplevel_page_client-dashboard-system',
             'client-dashboard_page_client-dashboard-system-settings',
@@ -234,11 +196,55 @@ class CDS_Admin {
         if ( !in_array($hook_suffix, $allowed_hooks) ) {
             return;
         }
-        wp_enqueue_script( $this->plugin_name . '-admin', CDS_PLUGIN_URL . 'admin/assets/js/admin-script.js', array( 'jquery' ), $this->version, false );
-        // Localize script if you need to pass PHP variables to JS
-        wp_localize_script($this->plugin_name . '-admin', 'cds_admin_ajax', array(
+        wp_enqueue_script( $this->plugin_name . '-admin', CDS_PLUGIN_URL . 'admin/assets/js/admin-script.js', array( 'jquery' ), $this->version, true ); // true for footer
+        wp_localize_script($this->plugin_name . '-admin', 'cds_admin_params', array(
             'ajax_url' => admin_url('admin-ajax.php'),
-            'nonce'    => wp_create_nonce('cds_admin_nonce')
+            'nonce'    => wp_create_nonce('cds_admin_ajax_nonce'), // Specific nonce for admin AJAX
+            'version'  => $this->version 
         ));
+    }
+
+    /**
+     * Handles AJAX request to update service status.
+     * This is a basic example. Needs more robust error handling and user capability checks.
+     */
+    public function handle_update_service_status() {
+        check_ajax_referer('cds_admin_ajax_nonce', 'nonce');
+
+        if (!current_user_can('manage_options')) { // Or a more specific capability
+            wp_send_json_error(array('message' => __('You do not have permission to perform this action.', 'client-dashboard-system')), 403);
+            return;
+        }
+
+        $user_id = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
+        $service_name = isset($_POST['service_name']) ? sanitize_text_field(wp_unslash($_POST['service_name'])) : '';
+        $new_status = isset($_POST['new_status']) ? sanitize_text_field(wp_unslash($_POST['new_status'])) : '';
+        $details_text = isset($_POST['details_text']) ? sanitize_textarea_field(wp_unslash($_POST['details_text'])) : ''; // For missing docs or denial reason
+
+        if (!$user_id || empty($service_name) || empty($new_status)) {
+            wp_send_json_error(array('message' => __('Missing required parameters.', 'client-dashboard-system')), 400);
+            return;
+        }
+
+        $user_manager = CDS_User_Manager::get_instance();
+        $details_for_update = array();
+        if ($new_status === 'Missing docs') {
+            $details_for_update['missing_docs'] = $details_text;
+        } elseif ($new_status === 'Request denied') {
+            $details_for_update['denied_reason'] = $details_text;
+        } else {
+            // For other statuses, if you want to update a general details field
+            $details_for_update['general_details'] = $details_text;
+        }
+        
+        $result = $user_manager->update_service_status_manually($user_id, $service_name, $new_status, $details_for_update);
+
+        if (is_wp_error($result)) {
+            wp_send_json_error(array('message' => $result->get_error_message()), 500);
+        } elseif ($result === true) {
+            wp_send_json_success(array('message' => __('Service status updated successfully.', 'client-dashboard-system')));
+        } else {
+             wp_send_json_success(array('message' => __('Service status was already up to date.', 'client-dashboard-system'), 'no_change' => true));
+        }
     }
 }
